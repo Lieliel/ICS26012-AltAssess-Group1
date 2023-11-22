@@ -1,6 +1,6 @@
 # Schedulyzer
 
-Schedulyzer is a comprehensive tool designed to simulate and analyze various scheduling algorithms. It provides a user-friendly graphical interface for users to interact with the system and understand the working of different scheduling algorithms.
+Schedulyzer is a comprehensive tool designed to simulate and analyze chosen scheduling algorithms. 
 
 ## Features
 
