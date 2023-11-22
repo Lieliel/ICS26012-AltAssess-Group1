@@ -10,7 +10,7 @@ Schedulyzer is a comprehensive tool designed to simulate and analyze chosen sche
 
 - **Shortest Seek Time First (SSTF)**: Simulates the SSTF disk scheduling algorithm. Users can input the current position, track size, seek rate, and number of requests, and the program will calculate the total head movement and seek time.
 
-- **Graphical User Interface (GUI)**: A user-friendly GUI makes it easy to choose a scheduling algorithm, input the necessary parameters, and view the results.
+- **[UPCOMING] Graphical User Interface (GUI)**: A user-friendly GUI makes it easy to choose a scheduling algorithm, input the necessary parameters, and view the results.
 
 - **Repeat Process Feature**: After running a simulation, users have the option to repeat the process or terminate the program.
 
