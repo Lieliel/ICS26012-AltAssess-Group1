@@ -18,7 +18,6 @@ Schedulyzer is a comprehensive tool designed to simulate and analyze various sch
 2. Choose a scheduling algorithm (SJF, SRTF, or SSTF).
 3. Input the necessary parameters.
 4. View the results.
-5. Choose to repeat the process or terminate the program.
 
 ## Requirements
 
