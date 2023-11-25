@@ -1,6 +1,6 @@
 # Schedulyzer
 
-Schedulyzer is a comprehensive tool designed to simulate and analyze various scheduling algorithms. It provides a user-friendly graphical interface for users to interact with the system and understand the working of different scheduling algorithms.
+Schedulyzer is a comprehensive tool designed to simulate and analyze various scheduling algorithms. It provides a user-friendly graphical interface for users to interact with the system and understand the workings of different scheduling algorithms.
 
 ## Features
 
@@ -22,13 +22,13 @@ Schedulyzer is a comprehensive tool designed to simulate and analyze various sch
 
 ## Requirements
 
-- Java Development Kit (JDK)
+- Java Development Kit (JDK) (Version: 1.8 and above)
 
 ## Installation
 
-1. Clone the repository.
-2. Compile the Java files.
-3. Run the Main class.
+1. Must have Java installed.
+2. Optional: Set the necessary path to avoid problems running.
+3. Run the Jar file.
 
 ## Contributing
 
