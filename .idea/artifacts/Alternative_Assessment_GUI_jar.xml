@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="Alternative Assessment GUI:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/Alternative_Assessment_GUI_jar</output-path>
-    <root id="archive" name="Alternative Assessment GUI.jar">
-      <element id="module-output" name="Alternative Assessment GUI" />
-    </root>
-  </artifact>
-</component>

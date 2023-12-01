@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.util.Arrays;
 
 public class SchedulerGUI extends JFrame {
-    private JButton sjfSubmitButton;
+    private JButton submitButton;
     private JTextArea outputArea;
 
     public SchedulerGUI() {
@@ -32,16 +32,16 @@ public class SchedulerGUI extends JFrame {
         algorithmComboBox.setBounds(220, 20, 150, 25);
         panel.add(algorithmComboBox);
 
-        sjfSubmitButton = new JButton("Submit");
-        sjfSubmitButton.setBounds(150, 70, 80, 25);
-        panel.add(sjfSubmitButton);
+        submitButton = new JButton("Submit");
+        submitButton.setBounds(150, 70, 80, 25);
+        panel.add(submitButton);
 
         outputArea = new JTextArea();
         outputArea.setBounds(10, 120, 380, 120);
         outputArea.setEditable(false);
         panel.add(outputArea);
 
-        sjfSubmitButton.addActionListener(new ActionListener() {
+        submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedAlgorithm = (String) algorithmComboBox.getSelectedItem();
@@ -128,43 +128,36 @@ public class SchedulerGUI extends JFrame {
     private void sjfLogic(int[] arrivalTime, int[] burstTime) {
         int n = arrivalTime.length;
 
-        // Create a copy of burstTime array to track remaining burst time for each process
-        int[] remainingTime = Arrays.copyOf(burstTime, n);
-
-        // Sort processes based on arrival time
-        for (int i = 0; i < n - 1; i++) {
-            for (int j = 0; j < n - i - 1; j++) {
-                if (arrivalTime[j] > arrivalTime[j + 1]) {
-                    // Swap arrivalTime
-                    int tempArrival = arrivalTime[j];
-                    arrivalTime[j] = arrivalTime[j + 1];
-                    arrivalTime[j + 1] = tempArrival;
-
-                    // Swap burstTime
-                    int tempBurst = burstTime[j];
-                    burstTime[j] = burstTime[j + 1];
-                    burstTime[j + 1] = tempBurst;
-
-                    // Swap remainingTime
-                    int tempRemaining = remainingTime[j];
-                    remainingTime[j] = remainingTime[j + 1];
-                    remainingTime[j + 1] = tempRemaining;
-                }
-            }
-        }
-
         // Variables to store waiting time and turnaround time
         int[] waitingTime = new int[n];
         int[] turnaroundTime = new int[n];
 
-        // Initialize the first process
-        waitingTime[0] = 0;
-        turnaroundTime[0] = burstTime[0];
+        // Array to track whether a process has been executed
+        boolean[] executed = new boolean[n];
 
-        // Calculate waiting time and turnaround time for each process
-        for (int i = 1; i < n; i++) {
-            waitingTime[i] = waitingTime[i - 1] + burstTime[i - 1];
-            turnaroundTime[i] = waitingTime[i] + burstTime[i];
+        int currentTime = 0;
+        int completedProcesses = 0;
+
+        while (completedProcesses < n) {
+            int shortestJob = -1;
+            int shortestBurst = Integer.MAX_VALUE;
+
+            for (int i = 0; i < n; i++) {
+                if (!executed[i] && arrivalTime[i] <= currentTime && burstTime[i] < shortestBurst) {
+                    shortestJob = i;
+                    shortestBurst = burstTime[i];
+                }
+            }
+
+            if (shortestJob != -1) {
+                waitingTime[shortestJob] = currentTime - arrivalTime[shortestJob];
+                turnaroundTime[shortestJob] = waitingTime[shortestJob] + burstTime[shortestJob];
+                currentTime += burstTime[shortestJob];
+                executed[shortestJob] = true;
+                completedProcesses++;
+            } else {
+                currentTime++;
+            }
         }
 
         // Calculate average waiting time and average turnaround time
