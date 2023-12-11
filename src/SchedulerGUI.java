@@ -72,7 +72,14 @@ public class SchedulerGUI extends JFrame {
         inputFrame.add(inputPanel);
 
         // Get the number of processes
-        int numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
+        int numberOfProcesses = 0;
+
+        try {
+            numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(inputFrame, "Please enter a valid integer for the number of processes.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method if an invalid input is provided
+        }
 
         for (int i = 0; i < numberOfProcesses; i++) {
             JPanel processPanel = new JPanel();
@@ -94,20 +101,22 @@ public class SchedulerGUI extends JFrame {
         JButton submitInputButton = new JButton("Submit Input");
         inputPanel.add(submitInputButton);
 
+        int finalNumberOfProcesses = numberOfProcesses;
         submitInputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Validate and collect input from the fields
                 try {
-                    int[] arrivalTime = new int[numberOfProcesses];
-                    int[] burstTime = new int[numberOfProcesses];
+                    int[] arrivalTime = new int[finalNumberOfProcesses];
+                    int[] burstTime = new int[finalNumberOfProcesses];
 
                     Component[] components = inputPanel.getComponents();
-                    for (int i = 0; i < numberOfProcesses; i++) {
+                    for (int i = 0; i < finalNumberOfProcesses; i++) {
                         JPanel processPanel = (JPanel) components[i];
                         JTextField arrivalField = (JTextField) processPanel.getComponent(3);
                         JTextField burstField = (JTextField) processPanel.getComponent(4);
 
+                        // Validate input as integers
                         arrivalTime[i] = Integer.parseInt(arrivalField.getText());
                         burstTime[i] = Integer.parseInt(burstField.getText());
                     }
@@ -117,7 +126,7 @@ public class SchedulerGUI extends JFrame {
                     // Close the input frame after processing
                     inputFrame.dispose();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(inputFrame, "Please enter valid numerical values for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(inputFrame, "Please enter valid integers for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -186,7 +195,14 @@ public class SchedulerGUI extends JFrame {
         inputFrame.add(inputPanel);
 
         // Get the number of processes
-        int numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
+        int numberOfProcesses = 0;
+
+        try {
+            numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(inputFrame, "Please enter a valid integer for the number of processes.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method if an invalid input is provided
+        }
 
         for (int i = 0; i < numberOfProcesses; i++) {
             JPanel processPanel = new JPanel();
@@ -208,20 +224,22 @@ public class SchedulerGUI extends JFrame {
         JButton submitInputButton = new JButton("Submit Input");
         inputPanel.add(submitInputButton);
 
+        int finalNumberOfProcesses = numberOfProcesses;
         submitInputButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Validate and collect input from the fields
                 try {
-                    int[] arrivalTime = new int[numberOfProcesses];
-                    int[] burstTime = new int[numberOfProcesses];
+                    int[] arrivalTime = new int[finalNumberOfProcesses];
+                    int[] burstTime = new int[finalNumberOfProcesses];
 
                     Component[] components = inputPanel.getComponents();
-                    for (int i = 0; i < numberOfProcesses; i++) {
+                    for (int i = 0; i < finalNumberOfProcesses; i++) {
                         JPanel processPanel = (JPanel) components[i];
                         JTextField arrivalField = (JTextField) processPanel.getComponent(3);
                         JTextField burstField = (JTextField) processPanel.getComponent(4);
 
+                        // Validate input as integers
                         arrivalTime[i] = Integer.parseInt(arrivalField.getText());
                         burstTime[i] = Integer.parseInt(burstField.getText());
                     }
@@ -231,7 +249,7 @@ public class SchedulerGUI extends JFrame {
                     // Close the input frame after processing
                     inputFrame.dispose();
                 } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(inputFrame, "Please enter valid numerical values for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(inputFrame, "Please enter valid integers for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -308,22 +326,62 @@ public class SchedulerGUI extends JFrame {
         outputArea.setText(result.toString());
     }
 
-
     private void onSSTFSubmit() {
-        int currentPosition = Integer.parseInt(JOptionPane.showInputDialog("Enter the current position:"));
-        int trackSize = Integer.parseInt(JOptionPane.showInputDialog("Enter the track size:"));
-        int seekRate = Integer.parseInt(JOptionPane.showInputDialog("Enter the seek rate:"));
-        int numberOfRequests = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of requests (max 10):"));
+        // Get the current position
+        int currentPosition = 0;
 
+        try {
+            currentPosition = Integer.parseInt(JOptionPane.showInputDialog("Enter the current position:"));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid integer for the current position.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method if an invalid input is provided
+        }
+
+        // Get the track size
+        int trackSize = 0;
+
+        try {
+            trackSize = Integer.parseInt(JOptionPane.showInputDialog("Enter the track size:"));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid integer for the track size.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method if an invalid input is provided
+        }
+
+        // Get the seek rate
+        int seekRate = 0;
+
+        try {
+            seekRate = Integer.parseInt(JOptionPane.showInputDialog("Enter the seek rate:"));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid integer for the seek rate.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method if an invalid input is provided
+        }
+
+        // Get the number of requests
+        int numberOfRequests = 0;
+
+        try {
+            numberOfRequests = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of requests (max 10):"));
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid integer for the number of requests.", "Error", JOptionPane.ERROR_MESSAGE);
+            return; // Exit the method if an invalid input is provided
+        }
+
+        // Validate the number of requests
         if (numberOfRequests > 10) {
             JOptionPane.showMessageDialog(this, "Maximum number of requests is 10.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
+            return; // Exit the method if the number of requests exceeds the limit
         }
 
         int[] requests = new int[numberOfRequests];
 
         for (int i = 0; i < numberOfRequests; i++) {
-            requests[i] = Integer.parseInt(JOptionPane.showInputDialog("Enter the location of request " + (i + 1) + ":"));
+            try {
+                requests[i] = Integer.parseInt(JOptionPane.showInputDialog("Enter the location of request " + (i + 1) + ":"));
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Please enter valid integers for the location of requests.", "Error", JOptionPane.ERROR_MESSAGE);
+                return; // Exit the method if an invalid input is provided
+            }
         }
 
         // Call the SSTF logic with the input values
@@ -336,9 +394,9 @@ public class SchedulerGUI extends JFrame {
         // Copy the requests array to track the remaining requests
         int[] remainingRequests = Arrays.copyOf(requests, n);
 
-        // Variables to store total head movement and seek time
+        // Variable to store total head movement and seek time
         int totalHeadMovement = 0;
-        double seekTime = 0;
+        double totalSeekTime = 0;
 
         // Process requests until all are completed
         while (n != 0) {
@@ -356,7 +414,7 @@ public class SchedulerGUI extends JFrame {
 
             // Update total head movement and seek time
             totalHeadMovement += closest;
-            seekTime += (double) closest / seekRate;
+            totalSeekTime += (double) closest / seekRate;
 
             // Move to the next request
             currentPosition = remainingRequests[index];
@@ -371,7 +429,7 @@ public class SchedulerGUI extends JFrame {
         // Display the results in the JTextArea
         StringBuilder result = new StringBuilder("SSTF Output:\n");
         result.append("Total Head Movement: ").append(totalHeadMovement).append("\n");
-        result.append("Seek Time: ").append(seekTime).append("\n");
+        result.append("Total Seek Time: ").append(totalSeekTime).append("\n");
 
         outputArea.setText(result.toString());
     }
