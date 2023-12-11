@@ -3,49 +3,64 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class SchedulerGUI extends JFrame {
-    private JButton submitButton;
     private JTextArea outputArea;
 
     public SchedulerGUI() {
         setTitle("Scheduling Algorithm Selector");
-        setSize(418, 290);
+        setSize(600, 400);
+        setMinimumSize(new Dimension(600, 400));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JPanel panel = new JPanel();
+        // Center the JFrame on the display
+        setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel(new BorderLayout());
         add(panel);
+
         placeComponents(panel);
 
         setVisible(true);
     }
 
     private void placeComponents(JPanel panel) {
-        panel.setLayout(null);
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Center-align the title
+        panel.add(inputPanel, BorderLayout.NORTH);
 
+        // Add padding to the top using an EmptyBorder
+        int paddingTop = 10; // Adjust this value as needed
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(paddingTop, 0, 0, 0));
+
+        // Grouping code for JLabel, JComboBox, and JButton
         JLabel algorithmLabel = new JLabel("Choose a scheduling algorithm:");
-        algorithmLabel.setBounds(10, 20, 200, 25);
-        panel.add(algorithmLabel);
+        inputPanel.add(algorithmLabel);
 
         String[] algorithms = {"Shortest Job First", "Shortest Remaining Time First", "Shortest Seek Time First"};
         JComboBox<String> algorithmComboBox = new JComboBox<>(algorithms);
-        algorithmComboBox.setBounds(220, 20, 150, 25);
-        panel.add(algorithmComboBox);
+        inputPanel.add(algorithmComboBox);
 
-        submitButton = new JButton("Submit");
-        submitButton.setBounds(150, 70, 80, 25);
-        panel.add(submitButton);
+        JButton submitButton = new JButton("Submit");
+        inputPanel.add(submitButton);
+
 
         outputArea = new JTextArea();
-        outputArea.setBounds(10, 120, 380, 120);
-        outputArea.setEditable(false);
-        panel.add(outputArea);
+        outputArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));  // Add padding inside the JTextArea
+        JScrollPane scrollPane = new JScrollPane(outputArea);
+
+        // Add padding to the sides using an EmptyBorder
+        int paddingSize = 10; // Adjust this value as needed
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(paddingSize, paddingSize, paddingSize, paddingSize));
+
+        // Set JTextArea to occupy the center of the layout
+        panel.add(scrollPane, BorderLayout.CENTER);
 
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String selectedAlgorithm = (String) algorithmComboBox.getSelectedItem();
-                switch (selectedAlgorithm) {
+                switch (Objects.requireNonNull(selectedAlgorithm)) {
                     case "Shortest Job First":
                         onSJFSubmit();
                         break;
@@ -65,25 +80,22 @@ public class SchedulerGUI extends JFrame {
 
     private void onSJFSubmit() {
         JFrame inputFrame = new JFrame("SJF Input");
-        inputFrame.setSize(400, 300);
+        inputFrame.setSize(500, 300);
+        inputFrame.setMinimumSize(new Dimension(500, 300));
+        inputFrame.setLocationRelativeTo(null);
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-        inputFrame.add(inputPanel);
+
+        // Add padding to the sides using EmptyBorder
+        int paddingSize = 10; // Adjust this value as needed
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(paddingSize, paddingSize, paddingSize, paddingSize));
 
         // Get the number of processes
-        int numberOfProcesses = 0;
-
-        try {
-            numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(inputFrame, "Please enter a valid integer for the number of processes.", "Error", JOptionPane.ERROR_MESSAGE);
-            return; // Exit the method if an invalid input is provided
-        }
+        int numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
 
         for (int i = 0; i < numberOfProcesses; i++) {
-            JPanel processPanel = new JPanel();
-            processPanel.setLayout(new GridLayout(1, 3, 10, 10));
+            JPanel processPanel = new JPanel(new GridLayout(1, 3, 10, 10));
 
             processPanel.add(new JLabel("Process " + (i + 1)));
             processPanel.add(new JLabel("Arrival Time"));
@@ -95,44 +107,58 @@ public class SchedulerGUI extends JFrame {
             processPanel.add(arrivalField);
             processPanel.add(burstField);
 
-            inputPanel.add(processPanel);
+            inputPanel.add(processPanel); // Add the processPanel directly
+
+            // Add a vertical strut for even spacing, except after the last process
+            if (i < numberOfProcesses - 1) {
+                inputPanel.add(Box.createVerticalStrut(10));
+            }
         }
 
         JButton submitInputButton = new JButton("Submit Input");
+        submitInputButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Add padding below submit input
+        inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(submitInputButton);
 
-        int finalNumberOfProcesses = numberOfProcesses;
-        submitInputButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Validate and collect input from the fields
-                try {
-                    int[] arrivalTime = new int[finalNumberOfProcesses];
-                    int[] burstTime = new int[finalNumberOfProcesses];
+        submitInputButton.addActionListener(e -> {
+            try {
+                int[] arrivalTime = new int[numberOfProcesses];
+                int[] burstTime = new int[numberOfProcesses];
 
-                    Component[] components = inputPanel.getComponents();
-                    for (int i = 0; i < finalNumberOfProcesses; i++) {
-                        JPanel processPanel = (JPanel) components[i];
+                Component[] components = inputPanel.getComponents();
+                int count = 0;
+
+                for (Component component : components) {
+                    if (component instanceof JPanel) {
+                        JPanel processPanel = (JPanel) component;
                         JTextField arrivalField = (JTextField) processPanel.getComponent(3);
                         JTextField burstField = (JTextField) processPanel.getComponent(4);
 
-                        // Validate input as integers
-                        arrivalTime[i] = Integer.parseInt(arrivalField.getText());
-                        burstTime[i] = Integer.parseInt(burstField.getText());
+                        arrivalTime[count] = Integer.parseInt(arrivalField.getText());
+                        burstTime[count] = Integer.parseInt(burstField.getText());
+                        count++;
                     }
-
-                    // Call the SJF logic with the input values
-                    sjfLogic(arrivalTime, burstTime);
-                    // Close the input frame after processing
-                    inputFrame.dispose();
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(inputFrame, "Please enter valid integers for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
+
+                // Call the SJF logic with the input values
+                sjfLogic(arrivalTime, burstTime);
+                // Close the input frame after processing
+                inputFrame.dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(inputFrame, "Please enter valid integers for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
+        // Create a JScrollPane and set its view to the inputPanel
+        JScrollPane scrollPane = new JScrollPane(inputPanel);
+        scrollPane.setBorder(null);  // Remove the border from the scroll pane
+        inputFrame.setContentPane(scrollPane);
+
         inputFrame.setVisible(true);
     }
+
 
     private void sjfLogic(int[] arrivalTime, int[] burstTime) {
         int n = arrivalTime.length;
@@ -188,25 +214,24 @@ public class SchedulerGUI extends JFrame {
 
     private void onSRTFSubmit() {
         JFrame inputFrame = new JFrame("SRTF Input");
-        inputFrame.setSize(400, 300);
+        inputFrame.setSize(500, 300);
+        inputFrame.setMinimumSize(new Dimension(500, 300));
+
+        // Center the JFrame on the display
+        inputFrame.setLocationRelativeTo(null);
 
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.Y_AXIS));
-        inputFrame.add(inputPanel);
+
+        // Add padding to the sides using EmptyBorder
+        int paddingSize = 10; // Adjust this value as needed
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(paddingSize, paddingSize, paddingSize, paddingSize));
 
         // Get the number of processes
-        int numberOfProcesses = 0;
-
-        try {
-            numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(inputFrame, "Please enter a valid integer for the number of processes.", "Error", JOptionPane.ERROR_MESSAGE);
-            return; // Exit the method if an invalid input is provided
-        }
+        int numberOfProcesses = Integer.parseInt(JOptionPane.showInputDialog("Enter the number of processes:"));
 
         for (int i = 0; i < numberOfProcesses; i++) {
-            JPanel processPanel = new JPanel();
-            processPanel.setLayout(new GridLayout(1, 3, 10, 10));
+            JPanel processPanel = new JPanel(new GridLayout(1, 3, 10, 10));
 
             processPanel.add(new JLabel("Process " + (i + 1)));
             processPanel.add(new JLabel("Arrival Time"));
@@ -219,43 +244,63 @@ public class SchedulerGUI extends JFrame {
             processPanel.add(burstField);
 
             inputPanel.add(processPanel);
+
+            // Add a vertical strut for even spacing, except after the last process
+            if (i < numberOfProcesses - 1) {
+                inputPanel.add(Box.createVerticalStrut(10));
+            }
         }
 
         JButton submitInputButton = new JButton("Submit Input");
+
+        // Center the submit button
+        submitInputButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Add a vertical strut for even spacing below the "Submit Input" button
+        inputPanel.add(Box.createVerticalStrut(10));
         inputPanel.add(submitInputButton);
 
-        int finalNumberOfProcesses = numberOfProcesses;
-        submitInputButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Validate and collect input from the fields
-                try {
-                    int[] arrivalTime = new int[finalNumberOfProcesses];
-                    int[] burstTime = new int[finalNumberOfProcesses];
+        submitInputButton.addActionListener(e -> {
+            // Validate and collect input from the fields
+            try {
+                int[] arrivalTime = new int[numberOfProcesses];
+                int[] burstTime = new int[numberOfProcesses];
 
-                    Component[] components = inputPanel.getComponents();
-                    for (int i = 0; i < finalNumberOfProcesses; i++) {
-                        JPanel processPanel = (JPanel) components[i];
+                Component[] components = inputPanel.getComponents();
+                int processPanelCount = 0; // Track the number of valid process panels
+
+                for (Component component : components) {
+                    if (component instanceof JPanel) {
+                        JPanel processPanel = (JPanel) component;
                         JTextField arrivalField = (JTextField) processPanel.getComponent(3);
                         JTextField burstField = (JTextField) processPanel.getComponent(4);
 
                         // Validate input as integers
-                        arrivalTime[i] = Integer.parseInt(arrivalField.getText());
-                        burstTime[i] = Integer.parseInt(burstField.getText());
-                    }
+                        arrivalTime[processPanelCount] = Integer.parseInt(arrivalField.getText());
+                        burstTime[processPanelCount] = Integer.parseInt(burstField.getText());
 
-                    // Call the SRTF logic with the input values
-                    srtfLogic(arrivalTime, burstTime);
-                    // Close the input frame after processing
-                    inputFrame.dispose();
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(inputFrame, "Please enter valid integers for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
+                        processPanelCount++;
+                    }
                 }
+
+                // Call the SRTF logic with the input values
+                srtfLogic(arrivalTime, burstTime);
+                // Close the input frame after processing
+                inputFrame.dispose();
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(inputFrame, "Please enter valid integers for arrival and burst time.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
+        // Create a JScrollPane and set its view to the inputPanel
+        JScrollPane scrollPane = new JScrollPane(inputPanel);
+        scrollPane.setBorder(null);  // Remove the border from the scroll pane
+        inputFrame.setContentPane(scrollPane);
+
         inputFrame.setVisible(true);
     }
+
+
 
     private void srtfLogic(int[] arrivalTime, int[] burstTime) {
         int n = arrivalTime.length;
